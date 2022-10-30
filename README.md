@@ -80,9 +80,27 @@ il formato della richiesta è errato
 ```json
 {
  "status": 422,
- "response": "Could not parse message object"
+ "response": "Could not parse request object"
 }
 ```
+
+### Risposta ai messaggi
+In questo caso il Server ha ricevuto il messaggio dal Client e l'ha inoltrato al target
+```json
+{
+ "status": 200,
+ "response": "OK"
+}
+```
+In questo caso il Server ha ricevuto il messaggio dal Client ma non è riuscito ad inoltrarlo al client.
+Questa condizione potrebbe verificarsi quando solo un client è connesso oppure quando il target non esiste
+```json
+{
+ "status": 404,
+ "response": "Target not found, the specified target may not exist or you're the only client connected"
+}
+```
+
 ## Diagrammi
 
 ### Diagramma della connessione
