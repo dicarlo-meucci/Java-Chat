@@ -83,3 +83,51 @@ il formato della richiesta è errato
  "response": "Could not parse message object"
 }
 ```
+## Diagrammi
+
+### Diagramma della connessione
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Server
+    participant Partecipanti
+    Client->>Server: richiede la connessione
+        Server->>Server: controlla validità username
+    Server->>Client: accetta la connessione
+        Server ->> Partecipanti: notifica del nuovo client connesso
+```
+---
+### Diagramma della disconnessione
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Server
+    participant Partecipanti
+    Client->>Server: avvisa della disconnessione
+    Server->>Client: disconnette
+        Server ->> Partecipanti: notifica del client disconesso
+```
+---
+### Diagramma del messaggio pubblico
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Server
+    participant Partecipanti
+    Client->>Server: invia il messaggio
+        Server->>Server: controlla la validità
+    Server ->> Partecipanti: inoltra il messaggio
+    Server->>Client: messaggio inviato
+```
+---
+### Diagramma del messaggio privato
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Server
+    Client->>Server: invia il messaggio
+        Server->>Server: controlla la validità
+        Server->>Server: cerca il target
+    Server ->> Target: inoltra il messaggio
+    Server->>Client: messaggio inviato
+```
