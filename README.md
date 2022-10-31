@@ -59,6 +59,15 @@ In questo caso il client con nome "Foo" sta inviando un messaggio privato che so
  "content": "This is an example of a private message"
 }
 ```
+#### Comando della lista
+In questo caso il client con nome "Foo" sta richiedendo la lista di partecipanti al Server
+```json
+{
+ "type":"command",
+ "author": "Foo",
+ "content": "list"
+}
+```
 
 ### Server
 Questa sezione definisce tutti gli oggetti che saranno trasmessi dal Server verso il Client
@@ -102,12 +111,29 @@ In questo caso il Server ha ricevuto il messaggio dal Client e l'ha inoltrato al
  "response": "OK"
 }
 ```
-In questo caso il Server ha ricevuto il messaggio dal Client ma non è riuscito ad inoltrarlo al client.
+In questo caso il Server ha ricevuto il messaggio dal Client ma non è riuscito ad inoltrarlo ai partecipanti della chat.
 Questa condizione potrebbe verificarsi quando solo un client è connesso oppure quando il target non esiste
 ```json
 {
  "status": 404,
  "response": "Target not found, the specified target may not exist or you're the only client connected"
+}
+```
+
+### Risposta ai comandi
+In questo caso il Server ha ricevuto il comando [list](#comando-della-lista) dal Client ed ha restituito la lista dei partecipanti
+```json
+{
+ "status": 200,
+ "response": "OK",
+ "participants": ["Foo", "Bar", "Baz"]
+}
+```
+In questo caso il Server ha ricevuto un comando dal Client ma non è riuscito ad interpretarlo
+```json
+{
+ "status": 403,
+ "response": "Command not found"
 }
 ```
 
