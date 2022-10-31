@@ -1,8 +1,18 @@
 # Java Chat | Leonardo Di Carlo | 5C-IA
 
+## Decrizione
+Questo progetto consiste nella creazione di una chatroom che implementa i [Socket](https://it.wikipedia.org/wiki/Socket_(reti)) (livello 4 ISO-OSI) utilizzando il protocollo TCP. Le componenti principali sono due; Client e Server che comunicano in modalità [full duplex](https://it.wikipedia.org/wiki/Duplex#Full-Duplex). I client possono scambiarsi messaggi di testo in [broadcast](https://it.wikipedia.org/wiki/Broadcasting_(informatica)) oppure [unicast](https://it.wikipedia.org/wiki/Unicast).
+
 ## Tecnologie Utilizzate
 - Java 18 (Maven)
+- JSON
 - Visual Studio Code
+
+Java 18 è il linguaggio di programmazione utilizzato per lo sviluppo di questo progetto, per facilitare la gestione dello stesso è stato incluso anche [Maven](https://maven.apache.org/), ovvero uno strumento di gestione dei progetti Java.
+
+I dati vengono serializzati e deserializzati in JSON utilizzando la libreria [Jackson](https://github.com/FasterXML/jackson) che permette di parsare JSON per poi istanziare oggetti automaticamente. Questa scelta deriva dal fatto che ultimamente JSON è diventato lo standard per la serializzazione di dati ed è più leggero rispetto all'XML, inoltre essendo popolare ha una grande disponibilità di strumenti.
+
+Come ambiente di sviluppo è consigliato usare [Visual Studio Code](https://code.visualstudio.com/) con le [estensioni](https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-pack) per lo sviluppo di Java. Questo progetto include la cartella **.vscode** per installare le estensioni consigliate.
 
 ## Architettura Messaggi
 I messaggi saranno serializzati interamente in JSON
@@ -71,7 +81,7 @@ In questo caso il Server ha accettato la connessione del Client
 In questo caso il Server ha rifiutato la connessione del Client comunicando il motivo; il nome inserito dall'utente è gia stato utilizzato
 ```json
 {
- "status": 404,
+ "status": 403,
  "response": "This name is already in use, try changing it"
 }
 ```
@@ -101,7 +111,7 @@ Questa condizione potrebbe verificarsi quando solo un client è connesso oppure 
 }
 ```
 
-## Diagrammi
+## Diagrammi di sequenza
 
 ### Diagramma della connessione
 ```mermaid
@@ -143,9 +153,14 @@ sequenceDiagram
 sequenceDiagram
     participant Client
     participant Server
+    participant Target
     Client->>Server: invia il messaggio
         Server->>Server: controlla la validità
         Server->>Server: cerca il target
     Server ->> Target: inoltra il messaggio
     Server->>Client: messaggio inviato
 ```
+## Diagrammi delle classi
+
+### Client
+to do...
