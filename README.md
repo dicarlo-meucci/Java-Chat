@@ -1,7 +1,7 @@
 # Java Chat | Leonardo Di Carlo | 5C-IA
 
 ## Decrizione
-Questo progetto consiste nella creazione di una chatroom che implementa i [Socket](https://it.wikipedia.org/wiki/Socket_(reti)) (livello 4 ISO-OSI) utilizzando il protocollo TCP. Le componenti principali sono due; Client e Server che comunicano in modalità [full duplex](https://it.wikipedia.org/wiki/Duplex#Full-Duplex). I client possono scambiarsi messaggi di testo in [broadcast](https://it.wikipedia.org/wiki/Broadcasting_(informatica)) oppure [unicast](https://it.wikipedia.org/wiki/Unicast).
+Questo progetto consiste nella creazione di una chatroom che implementa i [Socket](https://it.wikipedia.org/wiki/Socket_(reti)) (livello trasporto della pila ISO/OSI) utilizzando il protocollo TCP. Le componenti principali sono due; Client e Server che comunicano in modalità [full duplex](https://it.wikipedia.org/wiki/Duplex#Full-Duplex). I client possono scambiarsi messaggi di testo in [broadcast](https://it.wikipedia.org/wiki/Broadcasting_(informatica)) oppure [unicast](https://it.wikipedia.org/wiki/Unicast).
 
 ## Tecnologie Utilizzate
 - Java 18 (Maven)
@@ -15,7 +15,16 @@ I dati vengono serializzati e deserializzati in JSON utilizzando la libreria [Ja
 Come ambiente di sviluppo è consigliato usare [Visual Studio Code](https://code.visualstudio.com/) con le [estensioni](https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-pack) per lo sviluppo di Java. Questo progetto include la cartella **.vscode** per installare le estensioni consigliate.
 
 ## Architettura Messaggi
-I messaggi saranno serializzati interamente in JSON
+I messaggi saranno serializzati interamente in JSON.
+
+La fine del messaggio sarà delimitata dal carattere speciale `\0`
+
+#### Tabella dei messagi
+| Tipo | Utilizzo  |
+|:-:|---|
+| Message  | Messaggi generici pubblici e privati  |
+| Notification | Notifiche di connessione e disconnessione dei Client |
+| Command | Messaggi contenenti comandi gestiti dal server |
 
 ### Client
 Questa sezione definisce tutti gli oggetti che saranno trasmessi dal Client verso il Server
@@ -189,4 +198,30 @@ sequenceDiagram
 ## Diagrammi delle classi
 
 ### Client
-to do...
+```mermaid
+classDiagram
+
+class Main {
+    +main()
+}
+
+class SocketClient {
+    -socket : Socket
+    -address: InetAddress
+    -port: int
+    -inStream : DataInputStream
+    -outStream: DataOutputStream
+    +connect()
+}
+
+Thread <|-- WriteThread
+Thread <|-- ReadThread
+
+class WriteThread {
+    +start()
+}
+
+class ReadThread {
+    +start()
+}
+```
