@@ -1,5 +1,33 @@
 # Java Chat | Leonardo Di Carlo | 5C-IA
-
+## Indice
+  - [Decrizione](#decrizione)
+  - [Tecnologie Utilizzate](#tecnologie-utilizzate)
+  - [Architettura Messaggi](#architettura-messaggi)
+      - [Tabella dei messagi](#tabella-dei-messagi)
+      - [Tabella dei comandi](#tabella-dei-comandi)
+    - [Client](#client)
+      - [Notifica di connessione](#notifica-di-connessione)
+      - [Notifica di disconnessione](#notifica-di-disconnessione)
+      - [Messaggio generico pubblico](#messaggio-generico-pubblico)
+      - [Messaggio generico privato](#messaggio-generico-privato)
+      - [Comando della lista](#comando-della-lista)
+    - [Server](#server)
+      - [Tabella Status](#tabella-status)
+      - [Risposta alle notifiche](#risposta-alle-notifiche)
+    - [Risposta ai messaggi](#risposta-ai-messaggi)
+    - [Risposta ai comandi](#risposta-ai-comandi)
+  - [File di configurazione](#file-di-configurazione)
+    - [Client](#client-1)
+    - [Server](#server-1)
+  - [Diagrammi di sequenza](#diagrammi-di-sequenza)
+    - [Diagramma della connessione](#diagramma-della-connessione)
+    - [Diagramma della disconnessione](#diagramma-della-disconnessione)
+    - [Diagramma del messaggio pubblico](#diagramma-del-messaggio-pubblico)
+    - [Diagramma del messaggio privato](#diagramma-del-messaggio-privato)
+  - [Diagrammi delle classi](#diagrammi-delle-classi)
+    - [Client](#client-2)
+    - [Server](#server-2)
+  - [Licenza](#licenza)
 ## Decrizione
 Questo progetto consiste nella creazione di una chatroom che implementa i [Socket](https://it.wikipedia.org/wiki/Socket_(reti)) (livello trasporto della pila ISO/OSI) utilizzando il protocollo TCP. Le componenti principali sono due; Client e Server che comunicano in modalità [full duplex](https://it.wikipedia.org/wiki/Duplex#Full-Duplex). I client possono scambiarsi messaggi di testo in [broadcast](https://it.wikipedia.org/wiki/Broadcasting_(informatica)) oppure [unicast](https://it.wikipedia.org/wiki/Unicast).
 
@@ -19,12 +47,21 @@ I messaggi saranno serializzati interamente in JSON.
 
 La fine del messaggio sarà delimitata dal carattere speciale `\0`
 
+I comandi hanno come prefisso il carattere `/`
+<br>
+Esempio: `/list`
+
 #### Tabella dei messagi
 | Tipo | Utilizzo  |
 |:-:|---|
 | Message  | Messaggi generici pubblici e privati  |
 | Notification | Notifiche di connessione e disconnessione dei Client |
 | Command | Messaggi contenenti comandi gestiti dal server |
+
+#### Tabella dei comandi
+| Nome | Azione  |
+|:-:|---|
+| List  | Visualizza la [lista](#comando-della-lista) di tutti gli utenti connessi  |
 
 ### Client
 Questa sezione definisce tutti gli oggetti che saranno trasmessi dal Client verso il Server
@@ -146,6 +183,27 @@ In questo caso il Server ha ricevuto un comando dal Client ma non è riuscito ad
 }
 ```
 
+## File di configurazione
+### Client
+Il Client cercherà il file di configurazione `config.json` nella cartella root dell'eseguibile. La struttura deve essere la seguente:
+```json
+{
+    "cmdPrefix": "/", // il prefisso dei comandi (default: /)
+    "address": "127.0.0.1", // l'indirizzo del server al quale connettersi (default: 127.0.0.1)
+    "port": "8080" // la porta del server (default: 8080)
+}
+```
+### Server
+Il Server cercherà il file di configurazione `config.json` nella cartella root dell'eseguibile. La struttura deve essere la seguente:
+```json
+{
+    "port": "8080" // la porta su cui ascoltare connessioni (default: 8080)
+}
+```
+in alternativa è possibile passare la porta come argomento specificando il flag `-p`
+<br>
+Esempio: `java -jar server.jar -p 8000`
+
 ## Diagrammi di sequenza
 
 ### Diagramma della connessione
@@ -195,27 +253,24 @@ sequenceDiagram
     Server ->> Target: inoltra il messaggio
     Server->>Client: messaggio inviato
 ```
+
 ## Diagrammi delle classi
 
 ### Client
 ```mermaid
 classDiagram
 
-class Main {
-    +main()
-}
-
-class SocketClient {
+class Client {
     -socket : Socket
-    -address: InetAddress
-    -port: int
+    -address : InetAddress
+    -port : int
     -inStream : DataInputStream
-    -outStream: DataOutputStream
+    -outStream : DataOutputStream
     +connect()
+    +disconnect()
+    +send()
+    +receive()
 }
-
-Thread <|-- WriteThread
-Thread <|-- ReadThread
 
 class WriteThread {
     +start()
@@ -224,4 +279,84 @@ class WriteThread {
 class ReadThread {
     +start()
 }
+
+class Message {
+    -type : String
+    -author : String
+    -target : String
+    -content : String
+}
+
+class Response {
+    -status : int
+    -response : String
+}
+
+class CommandResponse {
+    -participants : ArrayList
+}
+
+class Notification {
+    -type : String
+    -user : String
+    -action : String
+}
+
+class Command {
+    -type : String
+    -author : String
+    -content : String
+}
+
+Thread <|-- WriteThread
+Thread <|-- ReadThread
+Response <|-- CommandResponse
 ```
+### Server
+```mermaid
+classDiagram
+class ClientHandler {
+    -client : Socket
+    +start()
+}
+
+class Server {
+    -clients : ArrayList
+    -server : ServerSocket
+    +emit(c : ClientHandler)
+    +broadcast()
+}
+
+class Message {
+    -type : String
+    -author : String
+    -target : String
+    -content : String
+}
+
+class Response {
+    -status : int
+    -response : String
+}
+
+class CommandResponse {
+    -participants : ArrayList
+}
+
+class Notification {
+    -type : String
+    -user : String
+    -action : String
+}
+
+class Command {
+    -type : String
+    -author : String
+    -content : String
+}
+
+Thread <|-- ClientHandler
+Response <|-- CommandResponse
+```
+## Licenza
+Questo progetto è sotto licenza GNU General Public License v3 (GPL), consultabile a questo [link](https://www.gnu.org/licenses/gpl-3.0.en.html)
