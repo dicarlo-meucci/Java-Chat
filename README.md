@@ -149,7 +149,7 @@ il formato della richiesta è errato
 }
 ```
 
-### Risposta ai messaggi
+#### Risposta ai messaggi
 In questo caso il Server ha ricevuto il messaggio dal Client e l'ha inoltrato al target
 ```json
 {
@@ -166,7 +166,7 @@ Questa condizione potrebbe verificarsi quando solo un client è connesso oppure 
 }
 ```
 
-### Risposta ai comandi
+#### Risposta ai comandi
 In questo caso il Server ha ricevuto il comando [list](#comando-della-lista) dal Client ed ha restituito la lista dei partecipanti
 ```json
 {
