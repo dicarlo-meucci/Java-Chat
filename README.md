@@ -1,6 +1,6 @@
 # Java Chat | Leonardo Di Carlo | 5C-IA
 ## Indice
-  - [Decrizione](#decrizione)
+  - [Descrizione](#descrizione)
   - [Tecnologie Utilizzate](#tecnologie-utilizzate)
   - [Architettura Messaggi](#architettura-messaggi)
       - [Tabella dei messagi](#tabella-dei-messagi)
@@ -14,8 +14,8 @@
     - [Server](#server)
       - [Tabella Status](#tabella-status)
       - [Risposta alle notifiche](#risposta-alle-notifiche)
-      - [Risposta ai messaggi](#risposta-ai-messaggi)
-      - [Risposta ai comandi](#risposta-ai-comandi)
+    - [Risposta ai messaggi](#risposta-ai-messaggi)
+    - [Risposta ai comandi](#risposta-ai-comandi)
   - [File di configurazione](#file-di-configurazione)
     - [Client](#client-1)
     - [Server](#server-1)
@@ -28,7 +28,7 @@
     - [Client](#client-2)
     - [Server](#server-2)
   - [Licenza](#licenza)
-## Decrizione
+## Descrizione
 Questo progetto consiste nella creazione di una chatroom che implementa i [Socket](https://it.wikipedia.org/wiki/Socket_(reti)) (livello trasporto della pila ISO/OSI) utilizzando il protocollo TCP. Le componenti principali sono due; Client e Server che comunicano in modalità [full duplex](https://it.wikipedia.org/wiki/Duplex#Full-Duplex). I client possono scambiarsi messaggi di testo in [broadcast](https://it.wikipedia.org/wiki/Broadcasting_(informatica)) oppure [unicast](https://it.wikipedia.org/wiki/Unicast).
 
 ## Tecnologie Utilizzate
@@ -149,7 +149,7 @@ il formato della richiesta è errato
 }
 ```
 
-#### Risposta ai messaggi
+### Risposta ai messaggi
 In questo caso il Server ha ricevuto il messaggio dal Client e l'ha inoltrato al target
 ```json
 {
@@ -166,7 +166,7 @@ Questa condizione potrebbe verificarsi quando solo un client è connesso oppure 
 }
 ```
 
-#### Risposta ai comandi
+### Risposta ai comandi
 In questo caso il Server ha ricevuto il comando [list](#comando-della-lista) dal Client ed ha restituito la lista dei partecipanti
 ```json
 {
