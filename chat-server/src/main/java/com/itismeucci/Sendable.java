@@ -28,6 +28,4 @@ public class Sendable {
         this.user = user;
     }
 
-  
-
 }

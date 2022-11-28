@@ -1,15 +1,36 @@
 package com.itismeucci;
 
+import java.io.File;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.FileUtils;
+
 public class App 
 {
     public static void main( String[] args )
     {
         int port = 8080;
-        System.out.println(args[0]);
-        if (args[0].equals("-p"))
+        if (args.length > 0)
         {
-            port = Integer.parseInt(args[1]);
+            if (args[0].equals("-p"))
+            {
+                port = Integer.parseInt(args[1]);
+            }
         }
+
         System.out.println("Server opened on port " + port);
+
+        File configFile = new File("config.json");
+        ObjectMapper objectMapper = new ObjectMapper();
+        if (configFile.exists()) {
+            try {
+                String content = FileUtils.readFileToString(configFile, "UTF-8");
+                System.out.println(content);
+                Config config = objectMapper.readValue(content, Config.class);
+                objectMapper.writeValue(new File("cock.json"), config);
+                Server server = new Server(config.getPort());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
