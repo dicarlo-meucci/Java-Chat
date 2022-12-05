@@ -8,8 +8,6 @@ public class Sendable {
     private String target;
     private String content;
 
-   
-
     public Sendable() {
     }
 
@@ -69,6 +67,4 @@ public class Sendable {
     public void setContent(String content) {
         this.content = content;
     }
-
-    
 }
