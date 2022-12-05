@@ -6,12 +6,9 @@ import java.net.*;
 
 public class Client {
     private Socket client;
-    private String address;
-    private int port;
     private WriteThread write;
     private ReadThread read;
     private Scanner keyboard = new Scanner(System.in);
-    private String userString;
 
     public Socket connect(String address, int port) throws IOException, InterruptedException {
         try {
@@ -21,24 +18,38 @@ public class Client {
             read.start();
             write.start();
         } catch (Exception e) {
-            System.out.println("Errore durante la connessione: " + e.getMessage());
+            System.out.println("Connection error: " + e.getMessage());
+            System.out.println("Retrying in 3 seconds...");
             Thread.sleep(3000);
         }
 
         return this.client;
     }
 
-    private Sendable authenticate() {
+    public Sendable authenticate() {
+        if (!client.isConnected())
+        {
+            System.out.println("Authentication error: Client not connected");
+            return null;
+        }
         return new Sendable();
-
     }
 
-    private Sendable sendDM() {
+    public Sendable sendDM(String target, String content) {
+        if (!client.isConnected())
+        {
+            System.out.println("Message error: Client not connected");
+            return null;
+        }
         return new Sendable();
     }
 
-    private Sendable sendAll() {
-
+    public Sendable sendAll() {
+        if (!client.isConnected())
+        {
+            System.out.println("Message error: Client not connected");
+            return null;
+        }
         return new Sendable();
     }
 

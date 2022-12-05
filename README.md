@@ -1,5 +1,7 @@
 # Java Chat | Leonardo Di Carlo | 5C-IA
 ## Indice
+- [Java Chat | Leonardo Di Carlo | 5C-IA](#java-chat--leonardo-di-carlo--5c-ia)
+  - [Indice](#indice)
   - [Descrizione](#descrizione)
   - [Tecnologie Utilizzate](#tecnologie-utilizzate)
   - [Architettura Messaggi](#architettura-messaggi)
@@ -123,6 +125,7 @@ Questa sezione definisce tutti gli oggetti che saranno trasmessi dal Server vers
 |:-:|---|
 | 200  | Richiesta valida e processata correttamente  |
 | 403 | Richiesta valida con parametri non consentiti |
+| 404 | Richiesta valida con destinatario inesistente |
 | 422 | Richiesta non valida |
 
 #### Risposta alle notifiche
@@ -188,7 +191,7 @@ In questo caso il Server ha ricevuto un comando dal Client ma non è riuscito ad
 Il Client cercherà il file di configurazione `config.json` nella cartella root dell'eseguibile. La struttura deve essere la seguente:
 ```json
 {
-    "cmdPrefix": "/", // il prefisso dei comandi (default: /)
+    "prefix": "/", // il prefisso dei comandi (default: /)
     "address": "127.0.0.1", // l'indirizzo del server al quale connettersi (default: 127.0.0.1)
     "port": "8080" // la porta del server (default: 8080)
 }
