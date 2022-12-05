@@ -8,7 +8,7 @@ import org.apache.commons.io.FileUtils;
 
 public class App {
     public static void main(String[] args) {
-        File configFile = new File("config.json");
+        File configFile = new File("client-config.json"); // cambia nome pls
         ObjectMapper objectMapper = new ObjectMapper();
         if (configFile.exists()) {
             try {
@@ -19,11 +19,10 @@ public class App {
                 while (client.getClient() == null)
                 {
                     try {
-                        client.connect(config.getAddress(),config.getPort());
-                        Thread.sleep(5000);
+                        client.connect(config.getAddress(), config.getPort());
                     } catch (Exception e)
                     {
-                        e.printStackTrace();
+                        System.out.println(e);
                     }
                 }
             } catch (Exception e) {

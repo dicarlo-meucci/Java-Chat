@@ -16,10 +16,10 @@ public class Server {
     public void listen()
     {
         try {
-            server = new ServerSocket(port);
+            this.server = new ServerSocket(port);
             while (true)
             {
-                Socket client = server.accept();
+                Socket client = this.server.accept();
                 ClientHandler handler = new ClientHandler(client);
                 this.clients.add(handler);
                 handler.start();

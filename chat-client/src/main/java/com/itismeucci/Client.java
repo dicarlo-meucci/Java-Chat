@@ -8,25 +8,41 @@ public class Client {
     private Socket client;
     private String address;
     private int port;
-    private DataInputStream in;
+    private WriteThread write;
+    private ReadThread read;
     private Scanner keyboard = new Scanner(System.in);
     private String userString;
 
-
-    public Socket connect(String address, int port) throws IOException {
+    public Socket connect(String address, int port) throws IOException, InterruptedException {
         try {
             this.client = new Socket(address, port);
-            this.in = new DataInputStream(client.getInputStream());
-        } catch (Exception e)
-        {
-            System.out.println("Errore durante la connessione: " + e.getLocalizedMessage());
+            this.read = new ReadThread(new DataInputStream(client.getInputStream()));
+            this.write = new WriteThread(new DataOutputStream(client.getOutputStream()));
+            read.start();
+            write.start();
+        } catch (Exception e) {
+            System.out.println("Errore durante la connessione: " + e.getMessage());
+            Thread.sleep(3000);
         }
 
         return this.client;
     }
 
-    public Socket getClient()
-    {
+    private Sendable authenticate() {
+        return new Sendable();
+
+    }
+
+    private Sendable sendDM() {
+        return new Sendable();
+    }
+
+    private Sendable sendAll() {
+
+        return new Sendable();
+    }
+
+    public Socket getClient() {
         return this.client;
     }
 }

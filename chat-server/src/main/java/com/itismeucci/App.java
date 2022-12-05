@@ -19,15 +19,15 @@ public class App
 
         System.out.println("Server opened on port " + port);
 
-        File configFile = new File("config.json");
+        File configFile = new File("server-config.json"); // cambia nome pls
         ObjectMapper objectMapper = new ObjectMapper();
         if (configFile.exists()) {
             try {
                 String content = FileUtils.readFileToString(configFile, "UTF-8");
                 System.out.println(content);
                 Config config = objectMapper.readValue(content, Config.class);
-                objectMapper.writeValue(new File("cock.json"), config);
                 Server server = new Server(config.getPort());
+                server.listen();
             } catch (Exception e) {
                 e.printStackTrace();
             }

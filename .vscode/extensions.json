@@ -3,5 +3,6 @@
         "vscjava.vscode-java-pack",
         "yzhang.markdown-all-in-one",
         "bierner.markdown-mermaid",
+        "sohibe.java-generate-setters-getters"
     ]
 }
