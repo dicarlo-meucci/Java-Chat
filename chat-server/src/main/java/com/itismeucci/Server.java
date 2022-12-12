@@ -77,6 +77,7 @@ public class Server {
         {
             response.setStatus(Constants.STATUS_NOT_FOUND);
             response.setResponse(Constants.RESPONSE_NOT_FOUND);
+            return response;
         }
 
         for (ClientHandler client : clients)
@@ -92,8 +93,14 @@ public class Server {
         return response;
     }
 
-    public static Sendable notifyEveryone()
+    public static void notifyEveryone(Sendable obj)
     {
-        
+        for (ClientHandler client : clients)
+        {
+            if (!client.getName().equals(obj.getUser()))
+            {
+                client.writeToStream(obj);
+            }
+        }
     }
 }
