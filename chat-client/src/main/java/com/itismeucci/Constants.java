@@ -8,6 +8,7 @@ public final class Constants {
     public static final String TYPE_MESSAGE = "message";
     public static final String TYPE_NOTIFICATION = "notification";
     public static final String TYPE_RESPONSE = "response";
+    public static final String TYPE_COMMAND_RESPONSE = "command-response";
     public static final int STATUS_VALID = 200;
     public static final int STATUS_BAD_PARAMETERS = 403;
     public static final int STATUS_NOT_FOUND = 404;

@@ -33,5 +33,4 @@ public class ReadThread extends Thread {
     public void setIn(DataInputStream in) {
         this.in = in;
     }
-
 }

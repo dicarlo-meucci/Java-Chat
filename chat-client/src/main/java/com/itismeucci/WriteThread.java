@@ -15,10 +15,11 @@ public class WriteThread extends Thread {
         System.out.println("INZIALIZZATA STREAM OUTPUT");
     }
 
-    public void writeToStream(String data)
+    public void writeToStream(Sendable data)
     {
         try {
-            this.out.writeBytes(data + '\0');
+            String obj = Formatter.serialize(data);
+            this.out.writeBytes(obj + '\0');
         } catch (Exception e)
         {
             System.out.println("Error while trying to write on stream: " + e.getMessage());

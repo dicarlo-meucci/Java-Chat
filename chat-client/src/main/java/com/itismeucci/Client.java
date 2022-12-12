@@ -17,6 +17,7 @@ public class Client {
             this.write = new WriteThread(new DataOutputStream(client.getOutputStream()));
             read.start();
             write.start();
+            authenticate();
         } catch (Exception e) {
             System.out.println("Connection error: " + e.getMessage());
             System.out.println("Retrying in 3 seconds...");
@@ -26,13 +27,31 @@ public class Client {
         return this.client;
     }
 
-    public Sendable authenticate() {
+    public void authenticate() {
         if (!client.isConnected())
         {
-            System.out.println("Authentication error: Client not connected");
-            return null;
+            System.out.println("Authentication error: Client not connected to server");
+            return;
         }
-        return new Sendable();
+        String name = keyboard.nextLine();
+        Sendable authentication = new Sendable();
+        authentication.setType(Constants.TYPE_NOTIFICATION);
+        authentication.setUser(name);
+        authentication.setAction(Constants.ACTION_CONNECT);
+        this.write.writeToStream(authentication);
+        Sendable response = this.read.readFromStream();
+        if (response.getType().equals(Constants.TYPE_RESPONSE))
+        {
+            if (response.getStatus() == Constants.STATUS_VALID)
+            {
+                System.out.println("You've successfully connected to the chatroom!");
+            }
+            else
+            {
+                System.out.println(response.getResponse());
+                authenticate();
+            }
+        }
     }
 
     public Sendable sendDM(String target, String content) {
