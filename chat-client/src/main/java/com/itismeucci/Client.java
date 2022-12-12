@@ -18,6 +18,8 @@ public class Client {
             read.start();
             write.start();
             authenticate();
+            System.out.println("@<name> to send a Direct Message");
+            System.out.println("/<command> to use commands");
         } catch (Exception e) {
             System.out.println("Connection error: " + e.getMessage());
             System.out.println("Retrying in 3 seconds...");
@@ -33,6 +35,7 @@ public class Client {
             System.out.println("Authentication error: Client not connected to server");
             return;
         }
+        System.out.print("Insert your name: ");
         String name = keyboard.nextLine();
         Sendable authentication = new Sendable();
         authentication.setType(Constants.TYPE_NOTIFICATION);

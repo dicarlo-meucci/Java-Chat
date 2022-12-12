@@ -16,7 +16,7 @@ public class ReadThread extends Thread {
     @Override
     public void run()
     {
-        System.out.println("INZIALIZZATA STREAM INPUT");
+        
     }
 
     public Sendable readFromStream()

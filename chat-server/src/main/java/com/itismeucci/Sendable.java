@@ -89,6 +89,4 @@ public class Sendable {
     public void setParticipants(ArrayList<String> participants) {
         this.participants = participants;
     }
-
-    
 }

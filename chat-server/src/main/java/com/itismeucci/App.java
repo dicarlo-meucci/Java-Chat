@@ -26,8 +26,8 @@ public class App
                 String content = FileUtils.readFileToString(configFile, "UTF-8");
                 System.out.println(content);
                 Config config = objectMapper.readValue(content, Config.class);
-                Server server = new Server(config.getPort());
-                server.listen();
+                Server.configure(config.getPort());
+                Server.listen();
             } catch (Exception e) {
                 e.printStackTrace();
             }

@@ -12,7 +12,7 @@ public class WriteThread extends Thread {
     @Override
     public void run()
     {
-        System.out.println("INZIALIZZATA STREAM OUTPUT");
+
     }
 
     public void writeToStream(Sendable data)
