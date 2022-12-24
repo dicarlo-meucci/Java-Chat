@@ -1,6 +1,8 @@
 package com.itismeucci;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
 
@@ -23,7 +25,7 @@ public class App
         ObjectMapper objectMapper = new ObjectMapper();
         if (configFile.exists()) {
             try {
-                String content = FileUtils.readFileToString(configFile, "UTF-8");
+                String content = FileUtils.readFileToString(configFile, StandardCharsets.UTF_8);
                 System.out.println(content);
                 Config config = objectMapper.readValue(content, Config.class);
                 Server.configure(config.getPort());

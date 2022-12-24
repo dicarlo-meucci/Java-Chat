@@ -21,8 +21,8 @@ public class ClientHandler extends Thread {
 
             e.printStackTrace();
         }
+        this.scanner = new Scanner(this.in);
         this.scanner.useDelimiter("\0");
-        System.out.println("Client connesso");
     }
 
     public void writeToStream(Sendable data) {
@@ -44,7 +44,6 @@ public class ClientHandler extends Thread {
             Sendable response = new Sendable();
             response.setStatus(Constants.STATUS_INVALID);
             response.setResponse(Constants.RESPONSE_INVALID);
-
         }
         return null;
     }
@@ -55,22 +54,47 @@ public class ClientHandler extends Thread {
             Sendable obj = readFromStream();
 
             if (obj == null)
-            return;
+            continue;
 
             switch (obj.getType()) {
                 case Constants.TYPE_MESSAGE:
-                    break;
-                case Constants.TYPE_NOTIFICATION:
-                if (obj.getAction().equals(Constants.ACTION_CONNECT))
                 {
-                    Server.authenticate(obj, this);
+                    Sendable msgResponse;
+
+                    if (obj.getTarget().equals("*"))
+                        msgResponse = Server.sendToEveryone(obj);
+                    else
+                        msgResponse = Server.sendToOne(obj);
+    
+                        writeToStream(msgResponse);
+                        break;
                 }
-                    break;
-                case Constants.TYPE_RESPONSE:
-                    break;
+                case Constants.TYPE_NOTIFICATION:
+                {
+                    if (obj.getAction().equals(Constants.ACTION_CONNECT))
+                    {
+                        Sendable authResponse = Server.authenticate(obj, this);
+                        writeToStream(authResponse);
+                        if (authResponse.getStatus() == Constants.STATUS_VALID)
+                        Server.notifyEveryone(obj);
+                    }
+                    else
+                    Server.disconnect(obj, this);
+                    Server.notifyEveryone(obj);
+                        break;
+                }
                 case Constants.TYPE_COMMAND:
+                {
+                    Sendable commandResponse = Server.command(obj);
+                    writeToStream(commandResponse);
                     break;
+                }
             }
         }
+    }
+
+    public Socket getClient()
+    {
+        return this.client;
     }
 }

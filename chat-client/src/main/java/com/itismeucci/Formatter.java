@@ -10,6 +10,9 @@ public class Formatter {
             return obj;
         } catch (Exception e)
         {
+            if (data.isEmpty())
+            return null;
+            
             System.out.println("Deserialization error: " + e.getMessage());
         }
 
@@ -20,5 +23,10 @@ public class Formatter {
     {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.writeValueAsString(data) + '\0';
+    }
+
+    public static void deleteConsoleLine()
+    {
+        System.out.print("\033[2K");
     }
 }

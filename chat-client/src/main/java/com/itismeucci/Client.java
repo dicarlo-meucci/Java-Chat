@@ -9,7 +9,8 @@ public class Client {
     private WriteThread write;
     private ReadThread read;
     private Scanner keyboard = new Scanner(System.in);
-
+    private String username = "";
+    public static boolean isAuthenticated = false;
     public Socket connect(String address, int port) throws IOException, InterruptedException {
         try {
             this.client = new Socket(address, port);
@@ -18,8 +19,6 @@ public class Client {
             read.start();
             write.start();
             authenticate();
-            System.out.println("@<name> to send a Direct Message");
-            System.out.println("/<command> to use commands");
         } catch (Exception e) {
             System.out.println("Connection error: " + e.getMessage());
             System.out.println("Retrying in 3 seconds...");
@@ -43,11 +42,35 @@ public class Client {
         authentication.setAction(Constants.ACTION_CONNECT);
         this.write.writeToStream(authentication);
         Sendable response = this.read.readFromStream();
+
         if (response.getType().equals(Constants.TYPE_RESPONSE))
         {
             if (response.getStatus() == Constants.STATUS_VALID)
             {
+                Client.isAuthenticated = true;
+                this.username = name;
                 System.out.println("You've successfully connected to the chatroom!");
+                System.out.println("@<name> to send a Direct Message");
+                System.out.println("/<command> to use commands");
+                System.out.println();
+                while (Client.isAuthenticated)
+                {
+                    String input = keyboard.nextLine();
+                    if (input.startsWith("@"))
+                    {
+                        String[] args = input.split(" ", 2);
+                        String target = args[0].substring(1, args[0].length());
+                        String content = args[1];
+                        sendDM(target, content);
+                    }
+                    else if (input.startsWith("/"))
+                    {
+                        String command = input.substring(1, input.length());
+                        sendCommand(command);
+                    }
+                    else
+                        sendAll(input);
+                }
             }
             else
             {
@@ -57,22 +80,58 @@ public class Client {
         }
     }
 
-    public Sendable sendDM(String target, String content) {
+    public void sendDM(String target, String content) {
         if (!client.isConnected())
         {
             System.out.println("Message error: Client not connected");
-            return null;
+            return;
         }
-        return new Sendable();
+        
+        Sendable message = new Sendable();
+        message.setType(Constants.TYPE_MESSAGE);
+        message.setTarget(target);
+        message.setUser(this.username);
+        message.setContent(content);
+
+        this.write.writeToStream(message);
     }
 
-    public Sendable sendAll() {
+    public void sendAll(String content) {
         if (!client.isConnected())
         {
             System.out.println("Message error: Client not connected");
-            return null;
+            return;
         }
-        return new Sendable();
+        Sendable message = new Sendable();
+
+        message.setType(Constants.TYPE_MESSAGE);
+        message.setTarget("*");
+        message.setUser(this.username);
+        message.setContent(content);
+
+        this.write.writeToStream(message);
+    }
+
+    public void sendCommand(String commandName)
+    {
+        if (!client.isConnected())
+        {
+            System.out.println("Message error: Client not connected");
+            return;
+        }
+
+        Sendable command = new Sendable();
+
+        command.setType(Constants.TYPE_COMMAND);
+        command.setUser(this.username);
+        command.setContent(commandName);
+
+        this.write.writeToStream(command);
+    }
+
+    public void disconnect()
+    {
+        Runtime.getRuntime().exit(0);
     }
 
     public Socket getClient() {
