@@ -32,7 +32,7 @@ public class Server {
         }
     }
     
-    public static Sendable authenticate(Sendable obj, ClientHandler self)
+    public static Sendable authenticate(Sendable obj, ClientHandler client)
     {
         Sendable response = new Sendable();
         response.setType(Constants.TYPE_RESPONSE);
@@ -44,19 +44,19 @@ public class Server {
             return response;
         }
 
-        for (ClientHandler client : clients)
+        for (ClientHandler c : clients)
         {
-            if (client.getName().equals(obj.getUser()))
+            if (c.getName().equals(obj.getUser()))
             {
                 response.setStatus(Constants.STATUS_BAD_PARAMETERS);
                 response.setResponse(Constants.RESPONSE_NAME_ALREADY_IN_USE);
                 return response;
             }
         }
-        self.setName(obj.getUser());
+        client.setName(obj.getUser());
         response.setStatus(Constants.STATUS_VALID);
         response.setResponse(Constants.RESPONSE_VALID);
-        System.out.println(self.getName() + " connected");
+        System.out.println(client.getName() + " connected");
         return response;
     }
 
@@ -142,10 +142,10 @@ public class Server {
         return response;
     }
 
-    public static void disconnect(Sendable obj, ClientHandler ch)
+    public static void disconnect(Sendable obj, ClientHandler client)
     {
         try {
-            ch.getClient().close();
+            client.getClient().close();
         } 
         catch (Exception e) {}
         ArrayList<ClientHandler> clientsCopy = new ArrayList<>(clients);

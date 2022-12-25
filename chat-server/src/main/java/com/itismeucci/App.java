@@ -21,7 +21,7 @@ public class App
 
         System.out.println("Server opened on port " + port);
 
-        File configFile = new File("config.json");
+        File configFile = new File("server-config.json");
         ObjectMapper objectMapper = new ObjectMapper();
         if (configFile.exists()) {
             try {
