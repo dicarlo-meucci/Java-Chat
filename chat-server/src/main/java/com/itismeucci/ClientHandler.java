@@ -4,6 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.*;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class ClientHandler extends Thread {
@@ -35,15 +36,19 @@ public class ClientHandler extends Thread {
     }
 
     public Sendable readFromStream() {
-        String data = this.scanner.next();
         try {
+            String data = this.scanner.next();
             Sendable obj = Formatter.deserialize(data);
             return obj;
         } catch (Exception e)
         {
-            Sendable response = new Sendable();
-            response.setStatus(Constants.STATUS_INVALID);
-            response.setResponse(Constants.RESPONSE_INVALID);
+            if (e instanceof NoSuchElementException)
+            {
+                Sendable disconnection = new Sendable();
+                disconnection.setType(Constants.TYPE_NOTIFICATION);
+                disconnection.setUser(getName());
+                Server.disconnect(disconnection, this);
+            }
         }
         return null;
     }
@@ -79,9 +84,11 @@ public class ClientHandler extends Thread {
                         Server.notifyEveryone(obj);
                     }
                     else
-                    Server.disconnect(obj, this);
-                    Server.notifyEveryone(obj);
-                        break;
+                    {
+                        Server.disconnect(obj, this);
+                        Server.notifyEveryone(obj);
+                    }
+                    break;
                 }
                 case Constants.TYPE_COMMAND:
                 {

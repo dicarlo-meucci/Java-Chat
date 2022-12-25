@@ -1,5 +1,6 @@
 package com.itismeucci;
 import java.io.*;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class ReadThread extends Thread {
@@ -18,12 +19,7 @@ public class ReadThread extends Thread {
     {
         while (true)
         {
-            try {
-                Thread.sleep(10);
-            } catch (Exception e)
-            {
-
-            }
+            try {Thread.sleep(10);} catch (Exception e) {} // if removed, this breaks everything
             if (Client.isAuthenticated)
             {
                 Sendable obj = readFromStream();
@@ -67,7 +63,13 @@ public class ReadThread extends Thread {
 
     public Sendable readFromStream()
     {
-        String data = this.scanner.next();
+        String data = "";
+        try {
+            data = this.scanner.next();
+        } catch (NoSuchElementException e)
+        {
+            Runtime.getRuntime().halt(0);
+        }
         Sendable incomingObject;
 
         if (data.isEmpty())

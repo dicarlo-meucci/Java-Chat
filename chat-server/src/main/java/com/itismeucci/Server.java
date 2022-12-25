@@ -37,12 +37,20 @@ public class Server {
         Sendable response = new Sendable();
         response.setType(Constants.TYPE_RESPONSE);
 
+        if (obj.getUser().contains(" ") || obj.getUser().length() < 3 || obj.getUser().length() > 16)
+        {
+            response.setStatus(Constants.STATUS_BAD_PARAMETERS);
+            response.setResponse(Constants.RESPONSE_NAME_NOT_VALID);
+            return response;
+        }
+
         for (ClientHandler client : clients)
         {
             if (client.getName().equals(obj.getUser()))
             {
                 response.setStatus(Constants.STATUS_BAD_PARAMETERS);
                 response.setResponse(Constants.RESPONSE_NAME_ALREADY_IN_USE);
+                return response;
             }
         }
         self.setName(obj.getUser());
@@ -140,11 +148,11 @@ public class Server {
             ch.getClient().close();
         } 
         catch (Exception e) {}
-        for (ClientHandler c : clients)
-        {
-            if (obj.getUser().equals(c.getName()))
-            {
+        ArrayList<ClientHandler> clientsCopy = new ArrayList<>(clients);
+        for (ClientHandler c : clientsCopy) {
+            if (obj.getUser().equals(c.getName())) {
                 clients.remove(c);
+                System.out.println(c.getName() + " disconnected");
             }
         }
     }

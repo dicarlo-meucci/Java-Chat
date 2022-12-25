@@ -17,4 +17,5 @@ public final class Constants {
     public static final String RESPONSE_INVALID = "Could not parse request object";
     public static final String RESPONSE_VALID = "OK";
     public static final String RESPONSE_NOT_FOUND = "Target not found, the specified target may not exist or you're the only client connected";
+    public static final String RESPONSE_NAME_NOT_VALID = "Your name is invalid (either too short, long or contains forbidden characters";
 }
