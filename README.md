@@ -191,7 +191,7 @@ In questo caso il Server ha ricevuto un comando dal Client ma non è riuscito ad
 
 ## File di configurazione
 ### Client
-Il Client cercherà il file di configurazione `config.json` nella cartella root dell'eseguibile. La struttura deve essere la seguente:
+Il Client cercherà il file di configurazione `client-config.json` nella cartella root dell'eseguibile. La struttura deve essere la seguente:
 ```json
 {
     "address": "127.0.0.1", // l'indirizzo del server al quale connettersi (default: 127.0.0.1)
@@ -199,7 +199,7 @@ Il Client cercherà il file di configurazione `config.json` nella cartella root 
 }
 ```
 ### Server
-Il Server cercherà il file di configurazione `config.json` nella cartella root dell'eseguibile. La struttura deve essere la seguente:
+Il Server cercherà il file di configurazione `server-config.json` nella cartella root dell'eseguibile. La struttura deve essere la seguente:
 ```json
 {
     "port": "8080" // la porta su cui ascoltare connessioni (default: 8080)
