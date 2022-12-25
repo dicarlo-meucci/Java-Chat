@@ -42,11 +42,19 @@ public class Client {
         authentication.setAction(Constants.ACTION_CONNECT);
         this.write.writeToStream(authentication);
         Sendable response = this.read.readFromStream();
+        while (response == null || !response.getType().equals(Constants.TYPE_RESPONSE))
+        response = this.read.readFromStream();
 
         if (response.getType().equals(Constants.TYPE_RESPONSE))
         {
             if (response.getStatus() == Constants.STATUS_VALID)
             {
+                Runtime.getRuntime().addShutdownHook(new Thread() {
+                    public void run() {
+                        disconnect();
+                        Runtime.getRuntime().halt(0);
+                    }
+                });
                 Client.isAuthenticated = true;
                 this.username = name;
                 System.out.println("You've successfully connected to the chatroom!");
@@ -56,6 +64,9 @@ public class Client {
                 while (Client.isAuthenticated)
                 {
                     String input = keyboard.nextLine();
+                    if (input.isEmpty())
+                    continue;
+
                     if (input.startsWith("@"))
                     {
                         String[] args = input.split(" ", 2);
@@ -120,6 +131,12 @@ public class Client {
             return;
         }
 
+        if (commandName.equals("disconnect"))
+        {
+            disconnect();
+            return;
+        }
+
         Sendable command = new Sendable();
 
         command.setType(Constants.TYPE_COMMAND);
@@ -131,7 +148,13 @@ public class Client {
 
     public void disconnect()
     {
-        Runtime.getRuntime().exit(0);
+        Sendable disconnection = new Sendable();
+        disconnection.setType(Constants.TYPE_NOTIFICATION);
+        disconnection.setUser(this.username);
+        disconnection.setAction(Constants.ACTION_DISCONNECT);
+        write.writeToStream(disconnection);
+        try { this.client.close(); } catch (Exception e) {}
+        System.out.println("You've been disconnected from the chatroom");
     }
 
     public Socket getClient() {
