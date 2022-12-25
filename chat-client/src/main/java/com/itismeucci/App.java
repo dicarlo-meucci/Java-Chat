@@ -7,7 +7,7 @@ import org.apache.commons.io.FileUtils;
 
 public class App {
     public static void main(String[] args) {
-        File configFile = new File("config.json");
+        File configFile = new File("client-config.json");
         ObjectMapper objectMapper = new ObjectMapper();
         if (configFile.exists()) {
             try {

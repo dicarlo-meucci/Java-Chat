@@ -29,16 +29,18 @@
   - [Diagrammi delle classi](#diagrammi-delle-classi)
     - [Client](#client-2)
     - [Server](#server-2)
+    - [Classi comuni](#classi-comuni)
   - [Licenza](#licenza)
+
 ## Descrizione
 Questo progetto consiste nella creazione di una chatroom che implementa i [Socket](https://it.wikipedia.org/wiki/Socket_(reti)) (livello trasporto della pila ISO/OSI) utilizzando il protocollo TCP. Le componenti principali sono due; Client e Server che comunicano in modalità [full duplex](https://it.wikipedia.org/wiki/Duplex#Full-Duplex). I client possono scambiarsi messaggi di testo in [broadcast](https://it.wikipedia.org/wiki/Broadcasting_(informatica)) oppure [unicast](https://it.wikipedia.org/wiki/Unicast).
 
 ## Tecnologie Utilizzate
-- Java 18 (Maven)
+- Java 1.7 (Maven)
 - JSON
 - Visual Studio Code
 
-Java 18 è il linguaggio di programmazione utilizzato per lo sviluppo di questo progetto, per facilitare la gestione dello stesso è stato incluso anche [Maven](https://maven.apache.org/), ovvero uno strumento di gestione dei progetti Java.
+Java è il linguaggio di programmazione utilizzato per lo sviluppo di questo progetto, per facilitare la gestione dello stesso è stato incluso anche [Maven](https://maven.apache.org/), ovvero uno strumento di gestione dei progetti Java.
 
 I dati vengono serializzati e deserializzati in JSON utilizzando la libreria [Jackson](https://github.com/FasterXML/jackson) che permette di parsare JSON per poi istanziare oggetti automaticamente. Questa scelta deriva dal fatto che ultimamente JSON è diventato lo standard per la serializzazione di dati ed è più leggero rispetto all'XML, inoltre essendo popolare ha una grande disponibilità di strumenti.
 
@@ -53,6 +55,8 @@ I comandi hanno come prefisso il carattere `/`
 <br>
 Esempio: `/list`
 
+I messaggi vengono scambiati attraverso l'oggetto `Sendable`, esso contiene molti campi. Saranno elencati solo quelli necessari in base al tipo di messaggio scambiato.
+
 #### Tabella dei messagi
 | Tipo | Utilizzo  |
 |:-:|---|
@@ -64,6 +68,7 @@ Esempio: `/list`
 | Nome | Azione  |
 |:-:|---|
 | List  | Visualizza la [lista](#comando-della-lista) di tutti gli utenti connessi  |
+| Disconnect  | Disconnette dalla chat |
 
 ### Client
 Questa sezione definisce tutti gli oggetti che saranno trasmessi dal Client verso il Server
@@ -92,7 +97,7 @@ In questo caso il client con nome "Foo" sta inviando un messaggio pubblico visib
 ```json
 {
  "type":"message",
- "author": "Foo",
+ "user": "Foo",
  "target": "*",
  "content": "This is an example message"
 }
@@ -102,7 +107,7 @@ In questo caso il client con nome "Foo" sta inviando un messaggio privato che so
 ```json
 {
  "type":"message",
- "author": "Foo",
+ "user": "Foo",
  "target": "Bar",
  "content": "This is an example of a private message"
 }
@@ -112,7 +117,7 @@ In questo caso il client con nome "Foo" sta richiedendo la lista di partecipanti
 ```json
 {
  "type":"command",
- "author": "Foo",
+ "user": "Foo",
  "content": "list"
 }
 ```
@@ -191,7 +196,6 @@ In questo caso il Server ha ricevuto un comando dal Client ma non è riuscito ad
 Il Client cercherà il file di configurazione `config.json` nella cartella root dell'eseguibile. La struttura deve essere la seguente:
 ```json
 {
-    "prefix": "/", // il prefisso dei comandi (default: /)
     "address": "127.0.0.1", // l'indirizzo del server al quale connettersi (default: 127.0.0.1)
     "port": "8080" // la porta del server (default: 8080)
 }
@@ -264,102 +268,112 @@ sequenceDiagram
 classDiagram
 
 class Client {
-    -socket : Socket
-    -address : InetAddress
+    -client : Socket
+    -write : WriteThread
+    -read : ReadThread
+    -keyboard : Scanner
+    -username : String
+    -isAuthenticated : boolean
+    +connect() Socket
+    +authenticate() void
+    +disconnect() void
+    +sendAll(content : String) void
+    +sendDM(target : String, content : String) void
+    +sendCommand(commandName : String) void
+}
+
+class Config {
+    -address : String
     -port : int
-    -inStream : DataInputStream
-    -outStream : DataOutputStream
-    +connect()
-    +disconnect()
-    +send()
-    +receive()
 }
 
 class WriteThread {
-    +start()
+    -out : DataOutputStream
+    +writeToStream(data : Sendable) void
 }
 
 class ReadThread {
-    +start()
-}
-
-class Message {
-    -type : String
-    -author : String
-    -target : String
-    -content : String
-}
-
-class Response {
-    -status : int
-    -response : String
-}
-
-class CommandResponse {
-    -participants : ArrayList
-}
-
-class Notification {
-    -type : String
-    -user : String
-    -action : String
-}
-
-class Command {
-    -type : String
-    -author : String
-    -content : String
+    -in : DataInputStream
+    -scanner : Scanner
+    +readFromStream() Sendable
+    +run() void
 }
 
 Thread <|-- WriteThread
 Thread <|-- ReadThread
-Response <|-- CommandResponse
 ```
 ### Server
 ```mermaid
 classDiagram
+
 class ClientHandler {
     -client : Socket
-    +start()
+    -scanner : Scanner
+    -in : DataInputStream
+    -out : DataOutputStream
+    +writeToStream() void
+    +readFromStream() Sendable
+    +run() void
 }
 
 class Server {
     -clients : ArrayList
     -server : ServerSocket
-    +emit(c : ClientHandler)
-    +broadcast()
+    -port : int
+    +listen()
+    +configure()
+    +authenticate(obj : Sendable, client : ClientHandler) Sendable
+    +sendToOne(obj : Sendable) Sendable
+    +sendToEveryone(obj : Sendable) Sendable
+    +notifyEveryone(obj : Sendable) Sendable
+    +command(obj : Sendable) Sendable
+    +disconnect(obj : Sendable, client : ClientHandler) void
 }
 
-class Message {
+class Config {
+    -port : int
+}
+
+
+Thread <|-- ClientHandler
+```
+### Classi comuni
+```mermaid
+classDiagram
+class Sendable {
     -type : String
-    -author : String
-    -target : String
-    -content : String
-}
-
-class Response {
+    -user : String
     -status : int
     -response : String
-}
-
-class CommandResponse {
+    -target: String
+    -content: String
+    -action : String
     -participants : ArrayList
 }
 
-class Notification {
-    -type : String
-    -user : String
-    -action : String
+class Constants {
+    +ACTION_CONNECT : String
+    +ACTION_DISCONNECT : String
+    +TARGET_EVERYONE : String
+    +TYPE_COMMAND : String
+    +TYPE_MESSAGE : String
+    +TYPE_NOTIFICATION : String
+    +TYPE_RESPONSE : String
+    +TYPE_COMMAND_RESPONSE : String
+    +STATUS_VALID : int
+    +STATUS_BAD_PARAMETERS : int
+    +STATUS_NOT_FOUND : int
+    +STATUS_INVALID : int
+    +RESPONSE_NAME_ALREADY_IN_USE : String
+    +RESPONSE_INVALID : String
+    +RESPONSE_VALID  : String
+    +RESPONSE_NAME_NOT_VALID : String
 }
 
-class Command {
-    -type : String
-    -author : String
-    -content : String
+class Formatter {
+    +deserialize(data : String) Sendable
+    +serialize(data : Sendable) String
 }
-
-Thread <|-- ClientHandler
-Response <|-- CommandResponse
 ```
 ## Licenza
 Questo progetto è sotto licenza GNU General Public License v3 (GPL), consultabile a questo [link](https://www.gnu.org/licenses/gpl-3.0.en.html)
