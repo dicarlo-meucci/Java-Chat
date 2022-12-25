@@ -1,7 +1,5 @@
-# Java Chat | Leonardo Di Carlo | 5C-IA
+# Java Chat | Leonardo Di Carlo & Niccolò Batistini | 5C-IA
 ## Indice
-- [Java Chat | Leonardo Di Carlo | 5C-IA](#java-chat--leonardo-di-carlo--5c-ia)
-  - [Indice](#indice)
   - [Descrizione](#descrizione)
   - [Tecnologie Utilizzate](#tecnologie-utilizzate)
   - [Architettura Messaggi](#architettura-messaggi)
